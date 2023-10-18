@@ -1,0 +1,1 @@
+export const PLACEHOLDER = "https://i.stack.imgur.com/y9DpT.jpg";
