@@ -10,15 +10,26 @@ import {
   FlatList,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { PLACEHOLDER } from "../assets/images";
-import CarouselCard from "../assets/components/CarouselCard";
+import { CarouselCard, CustomButton } from "../assets/components/index";
 
 const Home = () => {
 
-  const url = "https://www.themealdb.com/api/json/v1/1/random.php";
+  const urlCategories = "https://www.themealdb.com/api/json/v1/1/list.php?c=list";
+  const [categories, setCategories] = useState([]);
+
+  const getCategories = async () => {
+    const response = await fetch(urlCategories);
+    const data = await response.json();
+
+    console.log(data);
+    setCategories(data['meals']);
+  }
+
+  const urlRandom = "https://www.themealdb.com/api/json/v1/1/random.php";
+  const [recipe, setRecipe] = useState([]);
 
   const getRecipes = async () => {
-    const urls = Array(10).fill(url);
+    const urls = Array(10).fill(urlRandom);
     const promises = urls.map(
       (url) => fetch(url)
       .then((res) => res.json())
@@ -30,10 +41,9 @@ const Home = () => {
     setRecipe(data);
   }
 
-  const [recipe, setRecipe] = useState([]);
-
   useEffect(() => {
     getRecipes();
+    getCategories();
   }, []);
   const renderHeader = () => {
     return (
@@ -57,7 +67,9 @@ const Home = () => {
         </View>
         <TouchableOpacity onPress={() => console.log("Profile")}>
           <Image
-            source={PLACEHOLDER}
+            source={{
+              uri: "https://upload.wikimedia.org/wikipedia/en/9/93/Buddy_christ.jpg"
+            }}
             style={{
               width: 40,
               height: 40,
@@ -94,7 +106,7 @@ const Home = () => {
     );
   };
 
-  const renderDiscoverTitle = () => {
+  const renderTitle = (text) => {
     return (
       <View
         style={{
@@ -109,11 +121,39 @@ const Home = () => {
             marginHorizontal: 20,
           }}
         >
-          Discover
+          {text}
         </Text>
       </View>
     );
   };
+
+  const renderCategories = () => {
+    return (
+      <View
+      style={{
+        marginTop: 20,
+      }}
+    >
+      <FlatList
+        data = {categories}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        keyExtractor={(item,index) => index.toString()}
+        renderItem={({ item, index }) => {
+          return (
+            <View>
+              <CustomButton
+                category={item['strCategory']}
+                onPress={() => console.log("Recipe")}
+              ></CustomButton>
+            </View>
+          );
+        }
+      }
+      />
+      </View>
+      )
+    }
 
   const renderCarousel = () => {
     return (
@@ -158,10 +198,12 @@ const Home = () => {
             {renderHeader()}
             {/*Header Searchbar*/}
             {renderSearchBar()}
+            {/*Categories Title*/}
+            {renderTitle("Categories")}
             {/*Categories Section*/}
-
+            {renderCategories()}
             {/*Discover Title*/}
-            {renderDiscoverTitle()}
+            {renderTitle("Discover")}
             {/*Discover Carousel*/}
             {renderCarousel(recipe)}
           </View>
