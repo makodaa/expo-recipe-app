@@ -1,7 +1,7 @@
 import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Home, Browse, Build, Favorites, Setup } from '../screens'
-import {AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
+import {MaterialCommunityIcons } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
 
