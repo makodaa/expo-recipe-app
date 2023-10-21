@@ -65,7 +65,7 @@ const CarouselCard = ({containerStyle, recipeItem, onPress}) => {
       onPress = {onPress}
     >
         <Image
-        source = {recipeItem.strMealThumb}
+        source = {{uri:recipeItem.strMealThumb}}
         resizeMode = 'cover'
         style = {{
             width: '100%',

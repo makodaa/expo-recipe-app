@@ -12,7 +12,7 @@ const CustomButton = (category, onPress) => {
           borderRadius: 10,
           paddingVertical: 10,
           paddingHorizontal: 12,
-          marginLeft: 20
+          marginHorizontal: 10,
       }}
     >
       <Text

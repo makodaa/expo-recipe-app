@@ -9,11 +9,13 @@ import {
   TextInput,
   FlatList,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { CarouselCard, CustomButton } from "../assets/components/index";
+import { StatusBar } from "expo-status-bar";
 
 const Home = () => {
-
+  const insets = useSafeAreaInsets();
   const urlCategories = "https://www.themealdb.com/api/json/v1/1/list.php?c=list";
   const [categories, setCategories] = useState([]);
 
@@ -132,6 +134,7 @@ const Home = () => {
       <View
       style={{
         marginTop: 20,
+        marginHorizontal: 10
       }}
     >
       <FlatList
@@ -186,7 +189,19 @@ const Home = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={{
+      flex: 1,
+      backgroundColor: "#18181b",
+      paddingTop: insets.top,
+      paddingBottom: insets.bottom,
+    }}>
+      <StatusBar
+        animated={true}
+        backgroundColor="#18181b"
+        style="light"
+        barStyle='light-content'
+        hidden={false}
+      />
       <FlatList
         data={null}
         keyExtractor={(item) => `${item.id}`}
@@ -224,10 +239,3 @@ const Home = () => {
 };
 
 export default Home;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#18181b",
-  },
-});
