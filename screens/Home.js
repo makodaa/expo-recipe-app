@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   TextInput,
   FlatList,
+  Dimensions,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -125,6 +126,9 @@ const Home = () => {
         >
           {text}
         </Text>
+        <Text>
+
+        </Text>
       </View>
     );
   };
@@ -168,6 +172,8 @@ const Home = () => {
         <FlatList
           data={recipe}
           horizontal
+          decelerationRate={"fast"}
+          disableIntervalMomentum
           showsHorizontalScrollIndicator={false}
           keyExtractor={(item,index) => index.toString()}
           renderItem={({ item, index }) => {

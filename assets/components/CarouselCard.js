@@ -13,20 +13,21 @@ const DetailContents = ({recipeItem}) => {
     <View
       style = {{
         flex:1,
-        flexDirection: 'row',
+        flexDirection: 'column',
         justifyContent: 'space-between',
         }}
     >
       <Text
       style = {{
-        width: '70%',
-        color: 'black',
+        width: '100%',
+        color: 'white',
         fontSize: 18,
         fontWeight: 'bold',
       }}>
         {recipeItem.strMeal}
       </Text>
-
+      <Text>
+      </Text>
     </View>
   )
 }
@@ -34,12 +35,12 @@ const CarouselCardDetails = ({recipeItem}) => {
   return (
     <View
       style = {{
-        backgroundColor: 'blue',
+        backgroundColor: 'rgba(0,0,0,0.4)',
         position: 'absolute',
-        bottom: 10,
-        left: 10,
-        right: 10,
-        height: 100,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: 80,
         paddingVertical: 10,
         paddingHorizontal: 10,
       }}
@@ -59,7 +60,7 @@ const CarouselCard = ({containerStyle, recipeItem, onPress}) => {
         width: 250,
         marginTop: 20,
         marginRight: 20,
-        borderRadius: 20,
+        borderRadius: 5,
         ...containerStyle,
       }}
       onPress = {onPress}
@@ -70,7 +71,7 @@ const CarouselCard = ({containerStyle, recipeItem, onPress}) => {
         style = {{
             width: '100%',
             height: '100%',
-            borderRadius: 20
+            borderRadius: 5
         }}
         >
         </Image>
