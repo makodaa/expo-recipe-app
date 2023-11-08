@@ -2,6 +2,7 @@ import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Home, Browse, Build, Favorites, Setup } from '../screens'
 import {MaterialCommunityIcons } from '@expo/vector-icons';
+import { COLORS, DARK, SIZES, FONTS } from '../constants/index';
 
 const Tab = createBottomTabNavigator();
 
@@ -12,13 +13,14 @@ const BottomTabNavigator = () => {
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: {
+          height: 60,
           position: 'absolute',
           bottom: 0,
           left: 0,
           right: 0,
           elevation: 0,
-          backgroundColor: '#18181b',
-          borderTopColor: 'transparent',
+          backgroundColor: COLORS.background,
+          borderTopColor: COLORS.transparent,
         }
       }}
     >
@@ -29,8 +31,8 @@ const BottomTabNavigator = () => {
           tabBarIcon: ({ focused }) => (
             <MaterialCommunityIcons
               name="home"
-              size={24}
-              color={focused ? '#fbbf24' : '#748c94'}
+              size={26}
+              color={focused ? COLORS.primary : '#748c94'}
             />
           )
         }}
@@ -42,8 +44,8 @@ const BottomTabNavigator = () => {
           tabBarIcon: ({ focused }) => (
             <MaterialCommunityIcons
             name="apple-safari"
-            size={24}
-            color={focused ? '#fbbf24' : '#748c94'}
+            size={26}
+            color={focused ? COLORS.primary : '#748c94'}
             />
           )
         }}
@@ -55,8 +57,8 @@ const BottomTabNavigator = () => {
           tabBarIcon: ({ focused }) => (
             <MaterialCommunityIcons
               name="silverware-clean"
-              size={24}
-              color={focused ? '#fbbf24' : '#748c94'}
+              size={26}
+              color={focused ? COLORS.primary : '#748c94'}
             />
           )
         }}
@@ -68,8 +70,8 @@ const BottomTabNavigator = () => {
           tabBarIcon: ({ focused }) => (
             <MaterialCommunityIcons
               name="bookmark-box-multiple"
-              size={24}
-              color={focused ? '#fbbf24' : '#748c94'}
+              size={26}
+              color={focused ? COLORS.primary : '#748c94'}
             />
           )
         }}
@@ -81,8 +83,8 @@ const BottomTabNavigator = () => {
           tabBarIcon: ({ focused }) => (
             <MaterialCommunityIcons
               name="dots-horizontal"
-              size={24}
-              color={focused ? '#fbbf24' : '#748c94'}
+              size={26}
+              color={focused ? COLORS.primary : '#748c94'}
             />
           )
         }}

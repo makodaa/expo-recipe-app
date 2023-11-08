@@ -10,12 +10,14 @@ import {
   FlatList,
   Dimensions,
 } from "react-native";
+import { COLORS, DARK, SIZES, FONTS } from "../constants/index";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { CarouselCard, CustomButton } from "../assets/components/index";
 import { StatusBar } from "expo-status-bar";
 
-const Home = () => {
+
+const Home = ({navigation}) => {
   const insets = useSafeAreaInsets();
   const urlCategories = "https://www.themealdb.com/api/json/v1/1/list.php?c=list";
   const [categories, setCategories] = useState([]);
@@ -53,7 +55,8 @@ const Home = () => {
       <View
         style={{
           flexDirection: "row",
-          marginHorizontal: 20,
+          marginTop: SIZES.margin,
+          marginHorizontal: SIZES.margin,
           alignItems: "center",
           height: 80,
         }}
@@ -63,20 +66,18 @@ const Home = () => {
             flex: 1,
           }}
         >
-          <Text style={{ color: "#fff", fontSize: 20 }}>Hello, User</Text>
-          <Text style={{ color: "#fff", marginTop: 3 }}>
+          <Text style={{ color: COLORS.onsurface, ...FONTS.h1 }}>Hello, User</Text>
+          <Text style={{ color: COLORS.onsurface, ...FONTS.body}}>
             What do you want to cook today?
           </Text>
         </View>
         <TouchableOpacity onPress={() => console.log("Profile")}>
           <Image
-            source={{
-              uri: "https://upload.wikimedia.org/wikipedia/en/9/93/Buddy_christ.jpg"
-            }}
+            source={require("../assets/images/placeholder/profile.png")}
             style={{
-              width: 40,
-              height: 40,
-              borderRadius: 20,
+              width: 52,
+              height: 52,
+              borderRadius: 40,
             }}
           />
         </TouchableOpacity>
@@ -94,14 +95,15 @@ const Home = () => {
           marginHorizontal: 20,
           paddingHorizontal: 20,
           borderRadius: 10,
-          backgroundColor: "#fff",
+          backgroundColor: COLORS.surfacevariant,
         }}
       >
-        <MaterialCommunityIcons name="magnify" size={20} color="black" />
+        <MaterialCommunityIcons name="magnify" size={18} color={COLORS.onsurfacevariant} />
         <TextInput
           style={{
             flex: 1,
             marginLeft: 10,
+            color: COLORS.onsurfacevariant,
           }}
           placeholder="Search Recipes"
         />
@@ -113,15 +115,14 @@ const Home = () => {
     return (
       <View
         style={{
-          marginTop: 20,
+          marginVertical: 15,
         }}
       >
         <Text
           style={{
-            color: "#fff",
-            fontSize: 20,
-            fontWeight: "bold",
+            color: COLORS.onsurface,
             marginHorizontal: 20,
+            ...FONTS.h2,
           }}
         >
           {text}
@@ -133,16 +134,15 @@ const Home = () => {
     );
   };
 
-  const renderCategories = () => {
+  const renderCategories = (data) => {
     return (
       <View
       style={{
-        marginTop: 20,
-        marginHorizontal: 10
+        marginHorizontal: 20
       }}
     >
       <FlatList
-        data = {categories}
+        data = {data}
         horizontal
         showsHorizontalScrollIndicator={false}
         keyExtractor={(item,index) => index.toString()}
@@ -150,8 +150,7 @@ const Home = () => {
           return (
             <View>
               <CustomButton
-                category={item['strCategory']}
-                onPress={() => console.log("Recipe")}
+                category = {item['strCategory']}
               ></CustomButton>
             </View>
           );
@@ -164,11 +163,7 @@ const Home = () => {
 
   const renderCarousel = () => {
     return (
-      <View
-        style={{
-          marginTop: 20,
-        }}
-      >
+      <View>
         <FlatList
           data={recipe}
           horizontal
@@ -197,14 +192,14 @@ const Home = () => {
   return (
     <SafeAreaView style={{
       flex: 1,
-      backgroundColor: "#18181b",
+      backgroundColor: COLORS.surface,
       paddingTop: insets.top,
       paddingBottom: insets.bottom,
     }}>
       <StatusBar
         animated={true}
-        backgroundColor="#18181b"
-        style="light"
+        backgroundColor = {COLORS.transparent}
+        style="dark"
         barStyle='light-content'
         hidden={false}
       />
@@ -222,7 +217,7 @@ const Home = () => {
             {/*Categories Title*/}
             {renderTitle("Categories")}
             {/*Categories Section*/}
-            {renderCategories()}
+            {renderCategories(categories)}
             {/*Discover Title*/}
             {renderTitle("Discover")}
             {/*Discover Carousel*/}

@@ -1,23 +1,25 @@
 import { TouchableOpacity, Text, View } from "react-native";
 import React from "react";
+import { COLORS, DARK, SIZES, FONTS } from "../../constants/index";
 
-const CustomButton = (category, onPress) => {
+const CustomButton = (category, onPress, buttonStyle) => {
+
   return (
     <TouchableOpacity
       onPress={onPress}
       style={{
-          alignItems: "center",
-          elevation: 8,
-          backgroundColor: "#fff",
-          borderRadius: 10,
-          paddingVertical: 10,
-          paddingHorizontal: 12,
-          marginHorizontal: 10,
+      alignItems: "center",
+      elevation: 8,
+      backgroundColor: COLORS.primary,
+      marginRight: 10,
+      borderRadius: 4,
+      paddingVertical: 10,
+      paddingHorizontal: 14,
       }}
     >
       <Text
         style={{
-          color: "black",
+          color: COLORS.onbackground,
           fontSize: 12,
           fontWeight: "bold",
         }}

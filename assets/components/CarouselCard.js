@@ -5,8 +5,11 @@ import {
     Image,
     TouchableOpacity,
     Platform,
-    StyleSheet
-} from 'react-native'
+    StyleSheet,
+    Pressable
+} from 'react-native';
+import { COLORS } from '../../constants';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const DetailContents = ({recipeItem}) => {
   return (
@@ -56,9 +59,8 @@ const CarouselCard = ({containerStyle, recipeItem, onPress}) => {
   return (
     <TouchableOpacity
     style = {{
-        height: 350,
+        height: 450,
         width: 250,
-        marginTop: 20,
         marginRight: 20,
         borderRadius: 5,
         ...containerStyle,
@@ -79,6 +81,40 @@ const CarouselCard = ({containerStyle, recipeItem, onPress}) => {
           <CarouselCardDetails
           recipeItem={recipeItem}
           />
+        </View>
+        <View
+        style = {{
+          position: 'absolute',
+          top: 20,
+          left: 15,
+          paddingVertical: 5,
+          paddingHorizontal: 10,
+          backgroundColor: COLORS.transparentblack,
+          borderRadius: 5,
+        }}
+        >
+          <Text
+          style = {{
+            color: COLORS.white,
+            fontSize: 13,
+            fontWeight: 'bold',
+          }}
+          >
+            {recipeItem.strCategory}
+          </Text>
+        </View>
+        <View
+        style = {{
+          position: 'absolute',
+          top: 20,
+          right: 15,
+          paddingVertical: 5,
+          paddingHorizontal: 10,
+          backgroundColor: COLORS.transparent,
+        }}>
+          <Pressable>
+          <MaterialCommunityIcons name="heart-outline" size={28} color={COLORS.white} />
+          </Pressable>
         </View>
     </TouchableOpacity>
   )

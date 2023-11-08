@@ -1,4 +1,8 @@
-import { COLORS } from "./theme";
-import dummyData from "./dummyData";
+import { COLORS, DARK, SIZES, FONTS } from "./theme";
 
-export { COLORS, dummyData };
+export {
+    COLORS,
+    DARK,
+    SIZES,
+    FONTS,
+};
