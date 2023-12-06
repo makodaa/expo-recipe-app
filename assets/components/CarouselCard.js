@@ -9,6 +9,8 @@ import {
     Pressable
 } from 'react-native';
 import { COLORS } from '../../constants';
+import { useNavigation } from '@react-navigation/native';
+import Recipe from '../../screens/index';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const DetailContents = ({recipeItem}) => {

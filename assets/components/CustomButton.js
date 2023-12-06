@@ -2,11 +2,9 @@ import { TouchableOpacity, Text, View } from "react-native";
 import React from "react";
 import { COLORS, DARK, SIZES, FONTS } from "../../constants/index";
 
-const CustomButton = (category, onPress, buttonStyle) => {
-
+const CustomButton = (category, {onPressEvent}, buttonStyle) => {
   return (
     <TouchableOpacity
-      onPress={onPress}
       style={{
       alignItems: "center",
       elevation: 8,

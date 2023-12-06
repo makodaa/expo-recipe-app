@@ -1,25 +1,43 @@
-import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, TextInput, FlatList, SafeAreaView, Pressable } from 'react-native';
+import React, { useState, useEffect } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  FlatList,
+  SafeAreaView,
+  Pressable,
+  Image,
+  ImageBackground,
+} from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { COLORS, DARK, SIZES, FONTS } from '../constants/index';
-import { CustomButton } from '../assets/components';
-import { render } from 'react-dom';
+import { COLORS, SIZES, FONTS } from "../constants/index";
 
-const Browse = ({navigation}) => {
+const Browse = ({ navigation, externalQuery}) => {
   const [results, setResults] = useState([]);
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
+  const txtField = React.createRef();
   const insets = useSafeAreaInsets();
 
   const getResults = async () => {
-    const response = await fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?c=${query}`);
+    const response = await fetch(
+      `https://www.themealdb.com/api/json/v1/1/filter.php?c=${query}`
+    );
     const data = await response.json();
-    console.log(data);
-    console.log(typeof data);
-    setResults(data['meals']);
-  }
+    if (data["meals"] == null) {
+      const response = await fetch(
+        `https://www.themealdb.com/api/json/v1/1/filter.php?a=${query}`
+      );
+      const data = await response.json();
+      setResults(data["meals"]);
+      return;
+    }
+    setResults(data["meals"]);
+  };
 
-  const urlCategories = "https://www.themealdb.com/api/json/v1/1/list.php?c=list";
+  const urlCategories =
+    "https://www.themealdb.com/api/json/v1/1/list.php?c=list";
   const [categories, setCategories] = useState([]);
 
   const getCategories = async () => {
@@ -27,10 +45,11 @@ const Browse = ({navigation}) => {
     const data = await response.json();
 
     console.log(data);
-    setCategories(data['meals']);
-  }
+    setCategories(data["meals"]);
+  };
 
-  const urlCountries = "https://www.themealdb.com/api/json/v1/1/list.php?a=list";
+  const urlCountries =
+    "https://www.themealdb.com/api/json/v1/1/list.php?a=list";
   const [countries, setCountries] = useState([]);
 
   const getCountries = async () => {
@@ -38,18 +57,21 @@ const Browse = ({navigation}) => {
     const data = await response.json();
 
     console.log(data);
-    setCountries(data['meals']);
-  }
+    setCountries(data["meals"]);
+  };
   useEffect(() => {
     getCategories();
     getCountries();
   }, []);
 
   useEffect(() => {
+    if (externalQuery && externalQuery != "") {
+      setQuery(externalQuery);
+      txtField.current.value = externalQuery;
+    }
     getResults();
-  }
-  , [query]);
-  
+  }, [query]);
+
   const renderTitle = (text) => {
     return (
       <View
@@ -66,14 +88,37 @@ const Browse = ({navigation}) => {
         >
           {text}
         </Text>
-        <Text>
-
-        </Text>
+        <Text></Text>
       </View>
     );
   };
-
-
+  const renderPageHeader = () => (
+    <View>
+    <Pressable
+      onPress={() => navigation.goBack()}
+      style={{
+        height: 40,
+        columnGap: 10,
+        alignItems: "center",
+        flexDirection: "row",
+        paddingTop: 40,
+        paddingHorizontal:20,
+        backgroundColor: COLORS.transparent,
+      }}
+    >
+      <MaterialCommunityIcons
+        name="arrow-left"
+        color={COLORS.onsurface}
+        size={18}
+      />
+      <Text
+        style={{ color: COLORS.onsurface, ...FONTS.body, fontSize: 18 }}
+      >
+        Browse
+      </Text>
+    </Pressable>
+  </View>
+  );
   const renderSearchBar = () => {
     return (
       <View
@@ -86,21 +131,6 @@ const Browse = ({navigation}) => {
           columnGap: SIZES.base,
         }}
       >
-        <View>
-          <Pressable
-          style = {{
-            height: 40,
-            width: 40,
-            borderRadius: 20,
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: COLORS.transparent,
-          }}
-          onPress={() => navigation.goBack()}
-          >
-          <MaterialCommunityIcons name="arrow-left" size={22} color={COLORS.onsurfacevariant} />
-          </Pressable>
-        </View>
         <View
           style={{
             flexDirection: "row",
@@ -112,7 +142,11 @@ const Browse = ({navigation}) => {
             backgroundColor: COLORS.surfacevariant,
           }}
         >
-          <MaterialCommunityIcons name="magnify" size={18} color={COLORS.onsurfacevariant} />
+          <MaterialCommunityIcons
+            name="magnify"
+            size={18}
+            color={COLORS.onsurfacevariant}
+          />
           <TextInput
             style={{
               flex: 1,
@@ -120,76 +154,203 @@ const Browse = ({navigation}) => {
               color: COLORS.onsurfacevariant,
             }}
             placeholder="Search Recipes"
-            onChange={e => setQuery(e.target.value)}
+            onChange={(e) => setQuery(e.target.value)}
+            ref={txtField}
           />
+          <Pressable
+            style={{
+              height: 20,
+              width: 20,
+              borderRadius: 20,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: COLORS.transparent,
+            }}
+            onPress={() => {
+              setQuery("");
+              txtField.current.value = "";
+            }}
+          >
+            <MaterialCommunityIcons
+              name="close"
+              size={18}
+              color={COLORS.onsurfacevariant}
+            />
+          </Pressable>
         </View>
       </View>
-
-    )
-  }
+    );
+  };
 
   const renderCategories = (data) => {
     return (
       <View
+        style={{
+          marginHorizontal: 20,
+          flexDirection: "row",
+          flexWrap: "wrap",
+          justifyContent: "space-between",
+        }}
+      >
+        <FlatList
+          contentContainerStyle={{
+            justifyContent: "space-between",
+          }}
+          data={data}
+          numColumns={4}
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item, index }) => {
+            return (
+              <Pressable
+                style={{
+                  alignItems: "center",
+                  elevation: 8,
+                  backgroundColor: COLORS.primary,
+                  marginRight: 10,
+                  marginVertical: 2,
+                  borderRadius: 4,
+                  paddingVertical: 10,
+                  paddingHorizontal: 14,
+                }}
+                onPress={() => {
+                  setQuery(
+                    item.strCategory == null ? item.strArea : item.strCategory
+                  );
+                  txtField.current.value =
+                    item.strCategory == null ? item.strArea : item.strCategory;
+                }}
+              >
+                <Text
+                  style={{
+                    color: COLORS.onbackground,
+                    fontSize: 12,
+                    fontWeight: "bold",
+                  }}
+                >
+                  {item.strCategory == null ? item.strArea : item.strCategory}
+                </Text>
+              </Pressable>
+            );
+          }}
+        />
+      </View>
+    );
+  };
+
+  return (
+    <SafeAreaView
       style={{
-        marginHorizontal: 20
+        flex: 1,
+        backgroundColor: COLORS.surface,
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
       }}
     >
       <FlatList
-        data = {data}
-        numColumns={4}
-        columnWrapperStyle={{ flexWrap: 'wrap', flex: 1, marginTop: 5 }}
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(item,index) => index.toString()}
-        renderItem={({ item, index }) => {
-          return (
-              <CustomButton
-                category = {item['strCategory'] == null ? item['strArea'] : item['strCategory']}
-              ></CustomButton>
-          );
-        }
-      }
-      />
-      </View>
-      )
-    };
+        data={results}
+        showsVerticalScrollIndicator={false}
+        keyExtractor={(item, index) => index.toString()}
+        ListHeaderComponent={
+          <View>
+            {/*App Bar*/}
+            {renderPageHeader()}
+            {/*Search Bar*/}
+            {renderSearchBar()}
 
-  return (
-    <SafeAreaView style={{
-      flex: 1,
-      backgroundColor: COLORS.surface,
-      paddingTop: insets.top,
-      paddingBottom: insets.bottom,
-    }}>
-      <FlatList
-      data = {results}
-      keyExtractor={(item,index) => index.toString()}
-      ListHeaderComponent={
-        <View>
-        {/*App Bar*/}
-        {renderSearchBar()}
-        {/*Recent Searches*/}
-        {renderTitle("Recent Searches")}
-        {/*Search by Category*/}
-        {renderTitle("Search by Category")}
-        {renderCategories(categories)}
-        {/*Search by Country*/}
-        {renderTitle("Search by Country")}
-        {renderCategories(countries)}
-
-        </View>
+            {query ? (
+              <>{renderTitle("Search Results")}</>
+            ) : (
+              <>
+                {renderTitle("Recent Searches")}
+                {/*Search by Category*/}
+                {renderTitle("Search by Category")}
+                {renderCategories(categories)}
+                {/*Search by Country*/}
+                {renderTitle("Search by Country")}
+                {renderCategories(countries)}
+              </>
+            )}
+          </View>
         }
-      renderItem={({item}) => (
-        <View>
-          <Text
-          style = {{
-            color: COLORS.onsurface,
-            fontSize: 20,
-            marginHorizontal: 20,
-          }}
-          >{item.strMeal}</Text>
-        </View>
-      )}
+        renderItem={({ item }) => (
+          <Pressable
+            style={{
+              flexDirection: "row",
+              flexWrap: "wrap",
+              alignItems: "center",
+              marginHorizontal: 20,
+              marginVertical: 10,
+              // add shadow
+              shadowColor: "#000",
+              shadowOffset: {
+                width: 0,
+                height: 3,
+              },
+              shadowOpacity: 0.27,
+              shadowRadius: 4.65,
+              elevation: 6,
+            }}
+            onPress={() => navigation.navigate("Recipe", { idMeal: item.idMeal })}
+          >
+            <Image
+              source={{ uri: item.strMealThumb }}
+              resizeMode="cover"
+              style={{
+                width: "100%",
+                height: 160,
+              }}
+            />
+            {/* bold text for title */}
+            <View
+              style={{
+                position: "absolute",
+                bottom: 30,
+                left: 20,
+              }}
+            >
+              <Text
+                style={{
+                  width: 240,
+                  color: COLORS.white,
+                  ...FONTS.h1,
+                  fontSize: 16,
+                }}
+                numberOfLines={1}
+                ellipsizeMode
+              >
+                {item.strMeal}
+              </Text>
+            </View>
+            {/* Text for Category + Area */}
+            <View
+              style={{
+                position: "absolute",
+                bottom: 10,
+                left: 20,
+                justifyContent: 'center'
+              }}
+            >
+              <Text
+                style={{
+                  height: 28,
+                  flexBasis: 1,
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  color: COLORS.white,
+                  ...FONTS.body,
+                }}
+              >
+                View full recipe
+                <MaterialCommunityIcons
+                  name="chevron-right"
+                  size={24}
+                  color={COLORS.white}
+                />
+              </Text>
+            </View>
+          </Pressable>
+        )}
         ListFooterComponent={
           <View
             style={{
@@ -199,7 +360,7 @@ const Browse = ({navigation}) => {
         }
       />
     </SafeAreaView>
-  )
-}
+  );
+};
 
-export default Browse
+export default Browse;

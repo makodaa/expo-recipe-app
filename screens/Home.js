@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   TextInput,
   FlatList,
-  Dimensions,
+  Pressable,
 } from "react-native";
 import { COLORS, DARK, SIZES, FONTS } from "../constants/index";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -18,9 +18,11 @@ import { StatusBar } from "expo-status-bar";
 
 
 const Home = ({navigation}) => {
+  const txtField = React.createRef();
   const insets = useSafeAreaInsets();
   const urlCategories = "https://www.themealdb.com/api/json/v1/1/list.php?c=list";
   const [categories, setCategories] = useState([]);
+  const [query, setQuery] = useState('');
 
   const getCategories = async () => {
     const response = await fetch(urlCategories);
@@ -50,6 +52,7 @@ const Home = ({navigation}) => {
     getRecipes();
     getCategories();
   }, []);
+
   const renderHeader = () => {
     return (
       <View
@@ -106,7 +109,14 @@ const Home = ({navigation}) => {
             color: COLORS.onsurfacevariant,
           }}
           placeholder="Search Recipes"
+          ref = {txtField}
+          onChangeText={e => setQuery(e.target.value)}
         />
+        <Pressable
+          onPress={() => navigation.navigate("Browse", {external_query: query})}
+        >
+        <MaterialCommunityIcons name="arrow-right" size={18} color={COLORS.onsurfacevariant} />
+        </Pressable>
       </View>
     );
   };
@@ -138,28 +148,48 @@ const Home = ({navigation}) => {
     return (
       <View
       style={{
-        marginHorizontal: 20
+        marginHorizontal: 20,
+
       }}
     >
       <FlatList
         data = {data}
         horizontal
         showsHorizontalScrollIndicator={false}
-        keyExtractor={(item,index) => index.toString()}
+        keyExtractor={(item, index) => index.toString()}
         renderItem={({ item, index }) => {
           return (
-            <View>
-              <CustomButton
-                category = {item['strCategory']}
-              ></CustomButton>
-            </View>
+            <Pressable
+            style={{
+            alignItems: "center",
+            elevation: 8,
+            backgroundColor: COLORS.primary,
+            marginRight: 10,
+            marginVertical: 2,
+            borderRadius: 4,
+            paddingVertical: 10,
+            paddingHorizontal: 14,
+            }}
+            onPress={() => {
+            }}
+          >
+            <Text
+              style={{
+                color: COLORS.onbackground,
+                fontSize: 12,
+                fontWeight: "bold",
+              }}
+            >
+              {item.strCategory}
+            </Text>
+          </Pressable>
           );
         }
       }
       />
       </View>
       )
-    }
+    };
 
   const renderCarousel = () => {
     return (
@@ -176,10 +206,10 @@ const Home = ({navigation}) => {
               <View>
                 <CarouselCard
                   recipeItem={item}
-                  onPress={() => console.log("Recipe")}
                   containerStyle={{
                     marginLeft: index === 0 ? 20 : 0,
                   }}
+                  onPress={() => {navigation.navigate("Recipe", {idMeal: item.idMeal})}}
                 ></CarouselCard>
               </View>
             );
