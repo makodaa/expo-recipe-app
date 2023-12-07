@@ -13,23 +13,26 @@ import {
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { COLORS, SIZES, FONTS } from "../constants/index";
+import YoutubePlayer from "react-native-youtube-iframe";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Linking from "expo-linking";
 
 const Recipe = ({ navigation, route }) => {
   const insets = useSafeAreaInsets();
   const [recipe, setRecipe] = useState([]);
+  const [status, setStatus] = useState('heart-outline');
 
   const getRecipe = async () => {
     const response = await fetch(
       `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${route.params.idMeal}`
     );
     const data = await response.json();
-    console.log(data);
     setRecipe(data["meals"]);
   };
 
   useEffect(() => {
     getRecipe();
+    isCurrentItemFavorite();
   }, []);
 
   const getCookTime = (str) => {
@@ -50,9 +53,14 @@ const Recipe = ({ navigation, route }) => {
     }
   }, []);
 
-  const togglePlaying = useCallback(() => {
-    setPlaying((prev) => !prev);
-  }, []);
+  const isCurrentItemFavorite = async () => {
+    const value = await AsyncStorage.getItem(route.params.idMeal);
+    if (value !== null) {
+      setStatus('heart');
+    } else {
+      setStatus('heart-outline');
+    }
+  }
 
   const renderThumbnail = () => {
     return (
@@ -80,29 +88,53 @@ const Recipe = ({ navigation, route }) => {
               backgroundColor: "rgba(0,0,0,0.1)",
             }}
           >
-          <Pressable
-            onPress={() => navigation.goBack()}
-            style={{
-              height: 40,
-              columnGap: 10,
-              alignItems: "center",
-              flexDirection: "row",
-              paddingHorizontal: 20,
-              paddingVertical: 30,
-              backgroundColor: COLORS.transparent,
-            }}
+          <Pressable 
+          onPress={() => navigation.goBack()}
+          style={{
+            position: "absolute",
+            top: 10,
+            left: 10,
+            flexDirection: "row",
+            alignItems: "center",
+            padding: 10,
+            backgroundColor: COLORS.transparent,
+            borderRadius: 10,
+          }}
           >
             <MaterialCommunityIcons
               name="arrow-left"
               color={COLORS.white}
               size={18}
             />
+
             <Text
-              style={{ color: COLORS.white, ...FONTS.body, fontSize: 18 }}
+              style={{ marginLeft: 10, color: COLORS.white, ...FONTS.body, fontSize: 18 }}
             >
               Recipe
             </Text>
+
           </Pressable>
+          <View
+            style={{
+              position: "absolute",
+              top: 20,
+              right: 20,
+            }}
+          >
+            <Pressable
+              onPress={() => {
+                if (status == 'heart-outline') {
+                  setStatus('heart');
+                  AsyncStorage.setItem(route.params.idMeal, JSON.stringify(recipe));
+                } else {
+                  setStatus('heart-outline');
+                  AsyncStorage.removeItem(route.params.idMeal);
+                }
+              }}
+            >
+              <MaterialCommunityIcons name={status} color={COLORS.white} size={24}/>
+            </Pressable>
+            </View>
           </View>
         </ImageBackground>
       </View>
@@ -117,7 +149,8 @@ const Recipe = ({ navigation, route }) => {
         }}
       >
         <View>
-          {recipe[0]?.strMeal.length > 20 ? (
+          {
+          recipe[0]?.strMeal.length > 20 ? 
             <Text
               style={{
                 width: 200,
@@ -130,7 +163,7 @@ const Recipe = ({ navigation, route }) => {
             >
               {recipe[0]?.strMeal}
             </Text>
-          ) : (
+           : 
             <Text
               style={{
                 color: COLORS.onsurface,
@@ -140,7 +173,7 @@ const Recipe = ({ navigation, route }) => {
             >
               {recipe[0]?.strMeal}
             </Text>
-          )}
+          }
         </View>
         <View>
           <Text
@@ -217,7 +250,6 @@ const Recipe = ({ navigation, route }) => {
   };
 
   const renderVideoTutorial = () => {
-    console.log(recipe[0]?.strYoutube.split("=")[1]);
     return (
       <View
         style={{
@@ -234,6 +266,7 @@ const Recipe = ({ navigation, route }) => {
         >
           Video Tutorial
         </Text>
+        
         <Pressable
           onPress={() =>
             Linking.openURL(
@@ -289,18 +322,19 @@ const Recipe = ({ navigation, route }) => {
         data={recipe}
         keyExtractor={(item, index) => index.toString()}
         ListHeaderComponent={
-          <View>
+          <>
             {renderThumbnail()}
             {renderDescription()}
-          </View>
+          </>
         }
         ListHeaderComponentStyle={{
           marginBottom: 30,
         }}
         ListFooterComponent={
-          <View>
-            {renderInstructions()} {renderVideoTutorial()}
-          </View>
+          <>
+            {renderInstructions()}
+            {renderVideoTutorial()}
+          </>
         }
         ListFooterComponentStyle={{
           marginTop: 30,
@@ -318,6 +352,7 @@ const Recipe = ({ navigation, route }) => {
           }
           return (
             <View>
+
               <Text
                 style={{
                   color: COLORS.onsurface,
@@ -327,6 +362,7 @@ const Recipe = ({ navigation, route }) => {
               >
                 Ingredients
               </Text>
+
               <FlatList
                 data={ingredients}
                 keyExtractor={(item, index) => index.toString()}

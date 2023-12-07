@@ -11,8 +11,10 @@ import {
 import { COLORS, FONTS, SIZES, icons, images } from "../constants";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const Build = ({ navigation }) => {
+  const insets = useSafeAreaInsets();
   const [ingredients, setIngredients] = useState([]);
   const [selectedIds, setSelectedIds] = useState([]);
   const [query, setQuery] = useState([]);
@@ -72,31 +74,29 @@ const fetchRecipeDetails = async (name) => {
     console.log("recipes", recipes);
   }
 
-  const renderPageHeader = () => (
-    <View>
-      <Pressable
-        onPress={() => navigation.goBack()}
+  const renderPageHeader = () => {
+    return (
+      <View
         style={{
-          height: 40,
-          columnGap: 10,
-          alignItems: "center",
           flexDirection: "row",
-          paddingTop: 40,
-          paddingBottom: 40,
-          backgroundColor: COLORS.transparent,
+          alignItems: "center",
+          justifyContent: "space-between",
+          paddingHorizontal: 10,
+          paddingVertical: 10
         }}
       >
-        <MaterialCommunityIcons
-          name="arrow-left"
-          color={COLORS.onsurface}
-          size={18}
-        />
-        <Text style={{ color: COLORS.onsurface, ...FONTS.body, fontSize: 18 }}>
-          Build
-        </Text>
-      </Pressable>
-    </View>
-  );
+        <Pressable onPress={() => navigation.goBack()}>
+          <MaterialCommunityIcons
+            name="arrow-left"
+            size={24}
+            color={COLORS.primary}
+          />
+        </Pressable>
+        <Text style={{ ...FONTS.h2, color: COLORS.primary }}> Build </Text>
+        <View style={{ width: 24 }} ></View>
+      </View>
+    );
+  }
 
   const renderListItem = ({ item }) => (
     <TouchableOpacity
@@ -130,17 +130,15 @@ const fetchRecipeDetails = async (name) => {
         />
         <Text
           style={{
-            color: selectedIds.includes(item.idIngredient)
-              ? COLORS.white
-              : COLORS.black,
             ...FONTS.body,
             fontSize: 12,
             width: 70,
             lineHeight: 16,
             textAlign: "center",
+            color: COLORS.onsurface,
           }}
           numberOfLines={1}
-          ellipsizeMode="trail"
+          ellipsizeMode="tail"
         >
           {item.strIngredient}
         </Text>
@@ -150,14 +148,20 @@ const fetchRecipeDetails = async (name) => {
 
   const renderSearchButton = () => {
     return (
-      <View>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <Text style={{ ...FONTS.body, fontSize: 16, color: COLORS.primary, marginVertical: 10 }}>Select up to 3 ingredients</Text>
         <Pressable
           onPress={() => handleSearch()}
           style={{
             justifyContent: "center",
             alignItems: "center",
             backgroundColor: COLORS.primary,
-            padding: 20,
+            padding: 10,
             borderRadius: 10,
           }}
         >
@@ -171,6 +175,7 @@ const fetchRecipeDetails = async (name) => {
       style={{
         flex: 1,
         paddingHorizontal: 20,
+        marginTop: insets.top,
         backgroundColor: COLORS.surface,
         justifyContent: "center",
       }}
@@ -274,7 +279,6 @@ const fetchRecipeDetails = async (name) => {
             justifyContent: "space-between",
           }}
           contentContainerStyle={{
-            flex: 1,
             alignContent: "space-between",
             rowGap: 30,
             columnGap: 30,

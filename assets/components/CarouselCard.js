@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import {
     View,
     Text,
@@ -9,9 +9,8 @@ import {
     Pressable
 } from 'react-native';
 import { COLORS } from '../../constants';
-import { useNavigation } from '@react-navigation/native';
-import Recipe from '../../screens/index';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const DetailContents = ({recipeItem}) => {
   return (
@@ -58,6 +57,18 @@ const CarouselCardDetails = ({recipeItem}) => {
 }
 
 const CarouselCard = ({containerStyle, recipeItem, onPress}) => {
+  const [status, setStatus] = useState('');
+
+  useEffect(() => {
+    AsyncStorage.getItem(recipeItem.idMeal).then((value) => {
+      if (value !== null) {
+        setStatus('heart');
+      } else {
+        setStatus('heart-outline');
+      }
+    });
+  }, []);
+
   return (
     <TouchableOpacity
     style = {{
@@ -114,8 +125,23 @@ const CarouselCard = ({containerStyle, recipeItem, onPress}) => {
           paddingHorizontal: 10,
           backgroundColor: COLORS.transparent,
         }}>
-          <Pressable>
-          <MaterialCommunityIcons name="heart-outline" size={28} color={COLORS.white} />
+          <Pressable
+              onPress={() => {
+                AsyncStorage.getAllKeys().then((keys) => {
+                  AsyncStorage.multiGet(keys).then((result) => {
+                    console.log(result); 
+                  });
+                });
+                if (status === 'heart-outline') {
+                  AsyncStorage.setItem(recipeItem.idMeal, JSON.stringify(recipeItem));
+                  setStatus('heart');
+                } else {
+                  AsyncStorage.removeItem(recipeItem.idMeal);
+                  setStatus('heart-outline');
+                }
+              }}
+          >
+              <MaterialCommunityIcons name={status} size={24} color={COLORS.primary} />
           </Pressable>
         </View>
     </TouchableOpacity>

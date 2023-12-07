@@ -14,9 +14,10 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { COLORS, SIZES, FONTS } from "../constants/index";
 
-const Browse = ({ navigation, externalQuery}) => {
+const Browse = ({category, navigation}) => {
   const [results, setResults] = useState([]);
   const [query, setQuery] = useState("");
+  const [recentSearches, setRecentSearches] = useState([]);
   const txtField = React.createRef();
   const insets = useSafeAreaInsets();
 
@@ -43,8 +44,6 @@ const Browse = ({ navigation, externalQuery}) => {
   const getCategories = async () => {
     const response = await fetch(urlCategories);
     const data = await response.json();
-
-    console.log(data);
     setCategories(data["meals"]);
   };
 
@@ -65,10 +64,6 @@ const Browse = ({ navigation, externalQuery}) => {
   }, []);
 
   useEffect(() => {
-    if (externalQuery && externalQuery != "") {
-      setQuery(externalQuery);
-      txtField.current.value = externalQuery;
-    }
     getResults();
   }, [query]);
 
@@ -92,42 +87,38 @@ const Browse = ({ navigation, externalQuery}) => {
       </View>
     );
   };
-  const renderPageHeader = () => (
-    <View>
-    <Pressable
-      onPress={() => navigation.goBack()}
-      style={{
-        height: 40,
-        columnGap: 10,
-        alignItems: "center",
-        flexDirection: "row",
-        paddingTop: 40,
-        paddingHorizontal:20,
-        backgroundColor: COLORS.transparent,
-      }}
-    >
-      <MaterialCommunityIcons
-        name="arrow-left"
-        color={COLORS.onsurface}
-        size={18}
-      />
-      <Text
-        style={{ color: COLORS.onsurface, ...FONTS.body, fontSize: 18 }}
+  const renderPageHeader = () => {
+    return (
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          paddingHorizontal: SIZES.padding,
+          paddingVertical: SIZES.padding / 2,
+        }}
       >
-        Browse
-      </Text>
-    </Pressable>
-  </View>
-  );
+        <Pressable onPress={() => navigation.goBack()}>
+          <MaterialCommunityIcons
+            name="arrow-left"
+            size={24}
+            color={COLORS.primary}
+          />
+        </Pressable>
+        <Text style={{ ...FONTS.h2, color: COLORS.primary }}> Browse </Text>
+        <View style={{ width: 24 }} ></View>
+      </View>
+    );
+  }
   const renderSearchBar = () => {
     return (
       <View
         style={{
           flexDirection: "row",
-          marginTop: SIZES.margin,
+          marginTop: 10,
           marginHorizontal: SIZES.margin,
           alignItems: "center",
-          height: 80,
+          height: 70,
           columnGap: SIZES.base,
         }}
       >
@@ -197,6 +188,7 @@ const Browse = ({ navigation, externalQuery}) => {
             justifyContent: "space-between",
           }}
           data={data}
+          extraData={data}
           numColumns={4}
           showsHorizontalScrollIndicator={false}
           keyExtractor={(item, index) => index.toString()}
@@ -262,7 +254,6 @@ const Browse = ({ navigation, externalQuery}) => {
               <>{renderTitle("Search Results")}</>
             ) : (
               <>
-                {renderTitle("Recent Searches")}
                 {/*Search by Category*/}
                 {renderTitle("Search by Category")}
                 {renderCategories(categories)}
@@ -317,7 +308,7 @@ const Browse = ({ navigation, externalQuery}) => {
                   fontSize: 16,
                 }}
                 numberOfLines={1}
-                ellipsizeMode
+                ellipsizeMode="tail"
               >
                 {item.strMeal}
               </Text>
