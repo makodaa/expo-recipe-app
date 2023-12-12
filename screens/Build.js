@@ -71,7 +71,6 @@ const fetchRecipeDetails = async (name) => {
       recipes = [...recipes, ...fetchedRecipes];
     }
     setRecipes(recipes);
-    console.log("recipes", recipes);
   }
 
   const renderPageHeader = () => {
@@ -230,8 +229,8 @@ const fetchRecipeDetails = async (name) => {
                   ...FONTS.h1,
                   fontSize: 16,
                 }}
-                numberOfLines={1}
-                ellipsizeMode
+                // numberOfLines={1}
+                // ellipsizeMode
               >
                 {item.strMeal}
               </Text>

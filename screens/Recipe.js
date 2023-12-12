@@ -123,12 +123,16 @@ const Recipe = ({ navigation, route }) => {
           >
             <Pressable
               onPress={() => {
-                if (status == 'heart-outline') {
+                AsyncStorage.getAllKeys().then((keys) => {
+                  AsyncStorage.multiGet(keys).then((result) => {
+                  });
+                });
+                if (status === 'heart-outline') {
+                  AsyncStorage.setItem(route.params.idMeal, JSON.stringify(recipe[0]));
                   setStatus('heart');
-                  AsyncStorage.setItem(route.params.idMeal, JSON.stringify(recipe));
                 } else {
-                  setStatus('heart-outline');
                   AsyncStorage.removeItem(route.params.idMeal);
+                  setStatus('heart-outline');
                 }
               }}
             >

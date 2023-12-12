@@ -439,19 +439,16 @@ const Home = ({ navigation }) => {
       >
         <View
           style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
             backgroundColor: COLORS.transparent,
           }}
         >
           <View
             style={{
+              height: 200,
               backgroundColor: COLORS.surfacevariant,
               borderRadius: 20,
               padding: 35,
               marginHorizontal: 10,
-              alignItems: "center",
               shadowColor: COLORS.onbackground,
               shadowOffset: {
                 width: 0,
