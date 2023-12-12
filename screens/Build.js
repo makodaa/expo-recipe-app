@@ -84,7 +84,16 @@ const fetchRecipeDetails = async (name) => {
           paddingVertical: 10
         }}
       >
-        <Pressable onPress={() => navigation.goBack()}>
+        <Pressable onPress={() => {
+        if (recipes.length > 0) {
+          setRecipes([]);
+        }
+        else {
+          navigation.goBack();
+        }
+      }
+      }
+        >
           <MaterialCommunityIcons
             name="arrow-left"
             size={24}
@@ -186,6 +195,9 @@ const fetchRecipeDetails = async (name) => {
             extraData={selectedIds}
             showsVerticalScrollIndicator={false}
             keyExtractor={(item) => "_" + item.idMeal}
+            ListHeaderComponent={renderPageHeader}
+            ListFooterComponent={<></>}
+            ListFooterComponentStyle={{ paddingBottom: 200, marginBottom: 100 }}
             renderItem={({ item }) => (
               <Pressable
             style={{
